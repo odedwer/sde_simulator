@@ -15,8 +15,6 @@ setup(
     url='https://github.com/odedwer/sde_simulator',
     classifiers=[
         'Development Status :: 3 - Alpha',
-        'Intended Audience :: Scientists',
-        'Topic :: Numerical simulations :: SDE',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
