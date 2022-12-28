@@ -61,19 +61,19 @@ class SDESimulatorBase(ABC):
         return self._generated_dw_squared[t]
 
     @abstractmethod
-    def deterministic_func(self, y, **kwargs):
+    def deterministic_func(self, y, i, **kwargs):
         pass
 
     @abstractmethod
-    def stochastic_func(self, y, **kwargs):
+    def stochastic_func(self, y, i, **kwargs):
         pass
 
     def _step(self, i, **kwargs):
         yn = self.y[i - 1, :]
-        an = self.deterministic_func(yn, **kwargs) * (self.dt/self.tau)
-        bn = self.stochastic_func(yn, **kwargs)/self.tau
+        an = self.deterministic_func(yn, i=i, **kwargs) * (self.dt / self.tau)
+        bn = self.stochastic_func(yn, i=i, **kwargs) / self.tau
         dw = self.dW(i)
-        bnewn = self.stochastic_func(yn + an + bn * self.sqrtdt, **kwargs)
+        bnewn = self.stochastic_func(yn + an + bn * self.sqrtdt, i=i, **kwargs)
         self.y[i, ...] = yn + an + bn * dw + (0.5 / self.sqrtdt) * (bnewn - bn) * (self.dWsquared(i) - self.dt)
 
     def simulate(self, seed=97, use_tqdm=True, **kwargs):
