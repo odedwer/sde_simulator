@@ -10,18 +10,18 @@ class SDESimulatorBase(ABC):
     """
 
     @abstractmethod
-    def __init__(self, y0, tau=1, max_t=1, dt=1e-3, noise=0., n_sim=10000):
+    def __init__(self, y0, tau=100, max_t=1, dt_to_tau=1e-2, noise=0., n_sim=10000):
         self._y0 = np.array(y0)
-        self._time = np.arange(0, max_t + dt, dt)
-        self._dt = dt
-        self._sqrtdt = np.sqrt(dt)
+        self._tau = tau
+        self._dt = dt_to_tau * tau  # each step corresponds to dt ms. Default is 1 ms per timestep
+        self._time = np.arange(0, max_t + self._dt, self._dt)
+        self._sqrtdt = np.sqrt(self._dt)
         # shape of (time, # variables, # simulations)
         self._y = np.zeros(self.time.shape + self.y0.shape + (n_sim,), dtype=float)
         self._y[0, :, :] = self._y0[:, None]
         print("generating noise sequences...")
         self._generated_dw = np.random.normal(loc=0.0, scale=self.sqrtdt, size=self.y.shape)
         self._generated_dw_squared = self._generated_dw ** 2
-        self._tau = tau
         self._noise = noise
         self._simulated = False
         self._simulation_kwargs = dict()
