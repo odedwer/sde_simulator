@@ -1,7 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 from abc import ABC, abstractmethod
-
+from functools import lru_cache
 
 class SDESimulatorBase(ABC):
     """
@@ -10,10 +10,10 @@ class SDESimulatorBase(ABC):
     """
 
     @abstractmethod
-    def __init__(self, y0, tau=10, max_t=1, dt_to_tau=1e-2, noise=0., n_sim=10000):
+    def __init__(self, y0, tau=1, max_t=1, dt=1e-2, noise=0., n_sim=10000):
         self._y0 = np.array(y0)
         self._tau = tau
-        self._dt = dt_to_tau * tau  # each step corresponds to dt ms, with tau specified in ms. Default is 0.1 ms per timestep
+        self._dt = dt
         self._time = np.arange(0, max_t + self._dt, self._dt)
         self._sqrtdt = np.sqrt(self._dt)
         # shape of (time, # variables, # simulations)
@@ -54,9 +54,11 @@ class SDESimulatorBase(ABC):
     def noise(self):
         return self._noise
 
+    @lru_cache
     def dW(self, t):
         return self._generated_dw[t]
 
+    @lru_cache
     def dWsquared(self, t):
         return self._generated_dw_squared[t]
 
