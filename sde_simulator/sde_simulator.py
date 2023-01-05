@@ -3,6 +3,7 @@ from tqdm import tqdm
 from abc import ABC, abstractmethod
 from functools import lru_cache
 
+
 class SDESimulatorBase(ABC):
     """
     This is a base class for dynamic models, implementing a stochastic Rung-Kutta solver:
@@ -10,7 +11,8 @@ class SDESimulatorBase(ABC):
     """
 
     @abstractmethod
-    def __init__(self, y0, tau=1, max_t=1, dt=1e-2, noise=0., n_sim=10000):
+    def __init__(self, y0, tau=1, max_t=1, dt=1e-2, noise=0., n_sim=10000, verbose=True):
+        self._verbose = verbose
         self._y0 = np.array(y0)
         self._tau = tau
         self._dt = dt
@@ -19,12 +21,16 @@ class SDESimulatorBase(ABC):
         # shape of (time, # variables, # simulations)
         self._y = np.zeros(self.time.shape + self.y0.shape + (n_sim,), dtype=float)
         self._y[0, :, :] = self._y0[:, None]
-        print("generating noise sequences...")
+        self.print_str("generating noise sequences...")
         self._generated_dw = np.random.normal(loc=0.0, scale=self.sqrtdt, size=self.y.shape)
         self._generated_dw_squared = self._generated_dw ** 2
         self._noise = noise
         self._simulated = False
         self._simulation_kwargs = dict()
+
+    def print_str(self, string):
+        if self._verbose:
+            print(string)
 
     @property
     def y0(self):
