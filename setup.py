@@ -2,8 +2,7 @@ from setuptools import setup
 
 setup(
     name='sde_simulator',
-    version='0.1.6',
-    description="General base class implementation of Rung-Kutta SDE solver",
+    version='0.1.7777777 description="General base class implementation of Rung-Kutta SDE solver",
     long_description="This package provides a base class for simulating SDE using Rung-Kutta method.\n"
                      "The base class implements the simulation and requires the override of the deterministic and "
                      "stochastic methods of the model.",
