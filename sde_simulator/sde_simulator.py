@@ -34,7 +34,7 @@ class SDESimulatorBase(ABC):
         # shape of (time, # variables, # simulations)
         self._y = np.zeros(self.time.shape + self.y0.shape + (n_sim,), dtype=float)
         self._y[0, :, :] = self._y0[:, None]
-        print("generating noise sequences...")
+        self.print_str("generating noise sequences...")
         self._noise = noise
         self._generated_dw = np.random.normal(loc=0.0, scale=noise*self.sqrtdt, size=self.y.shape)
         self._generated_dw_squared = self._generated_dw ** 2
