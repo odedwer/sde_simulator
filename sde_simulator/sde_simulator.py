@@ -1,7 +1,9 @@
+from functools import lru_cache
+
 import numpy as np
 from tqdm import tqdm
 from abc import ABC, abstractmethod
-from functools import lru_cache
+import numpy.typing as npt
 
 
 class SDESimulatorBase(ABC):
@@ -11,7 +13,18 @@ class SDESimulatorBase(ABC):
     """
 
     @abstractmethod
-    def __init__(self, y0, tau=1, max_t=1, dt=1e-2, noise=0., n_sim=10000, verbose=True):
+    def __init__(self, y0: npt.NDArray, tau: [float, int] = 1., max_t: [float, int] = 1., dt: float = 1e-2,
+                 noise: float = 0., n_sim: int = 10000, verbose: bool = True):
+        """
+        @param y0: Iterable convertible to numpy array. The initial value of the simulation variables.
+                   Should be 1D of size #variables.
+        @param tau: integer/float. The time constant of the simulation.
+        @param max_t: integer/float. Determines the number of steps in the simulation together with dt.
+        @param dt: float. The time between two steps in the simulation.
+        @param noise: float. The standard deviation of the Wiener process
+        @param n_sim: integer. The number of simulations to run.
+        @param verbose: bool. Controls whether print_str prints the given argument or not.
+        """
         self._verbose = verbose
         self._y0 = np.array(y0)
         self._tau = tau
@@ -21,10 +34,10 @@ class SDESimulatorBase(ABC):
         # shape of (time, # variables, # simulations)
         self._y = np.zeros(self.time.shape + self.y0.shape + (n_sim,), dtype=float)
         self._y[0, :, :] = self._y0[:, None]
-        self.print_str("generating noise sequences...")
-        self._generated_dw = np.random.normal(loc=0.0, scale=self.sqrtdt, size=self.y.shape)
-        self._generated_dw_squared = self._generated_dw ** 2
+        print("generating noise sequences...")
         self._noise = noise
+        self._generated_dw = np.random.normal(loc=0.0, scale=noise*self.sqrtdt, size=self.y.shape)
+        self._generated_dw_squared = self._generated_dw ** 2
         self._simulated = False
         self._simulation_kwargs = dict()
 
