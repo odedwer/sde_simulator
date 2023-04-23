@@ -14,7 +14,7 @@ class SDESimulatorBase(ABC):
 
     @abstractmethod
     def __init__(self, y0: npt.NDArray, tau: [float, int] = 1., max_t: [float, int] = 1., dt: float = 1e-2,
-                 noise: float = 0., n_sim: int = 10000, verbose: bool = True):
+                 noise: float = 0., n_sim: int = 10000, verbose: bool = True, **kwargs):
         """
         @param y0: Iterable convertible to numpy array. The initial value of the simulation variables.
                    Should be 1D of size #variables.
@@ -36,10 +36,11 @@ class SDESimulatorBase(ABC):
         self._y[0, :, :] = self._y0[:, None]
         self.print_str("generating noise sequences...")
         self._noise = noise
-        self._generated_dw = np.random.normal(loc=0.0, scale=noise*self.sqrtdt, size=self.y.shape)
+        self._generated_dw = np.random.normal(loc=0.0, scale=noise * self.sqrtdt, size=self.y.shape)
         self._generated_dw_squared = self._generated_dw ** 2
         self._simulated = False
         self._simulation_kwargs = dict()
+        self.kwargs = kwargs
 
     def print_str(self, string):
         if self._verbose:
