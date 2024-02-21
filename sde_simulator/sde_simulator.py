@@ -73,11 +73,11 @@ class SDESimulatorBase(ABC):
     def noise(self):
         return self._noise
 
-    @lru_cache
+    @lru_cache(None)
     def dW(self, t):
         return self._generated_dw[t]
 
-    @lru_cache
+    @lru_cache(None)
     def dWsquared(self, t):
         return self._generated_dw_squared[t]
 
