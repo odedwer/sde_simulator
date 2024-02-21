@@ -40,7 +40,7 @@ class SDESimulatorBase(ABC):
         self._generated_dw_squared = self._generated_dw ** 2
         self._simulated = False
         self._simulation_kwargs = dict()
-        self.init_kwargs = kwargs.copy()
+        self.kwargs = kwargs
 
     def print_str(self, string):
         if self._verbose:
